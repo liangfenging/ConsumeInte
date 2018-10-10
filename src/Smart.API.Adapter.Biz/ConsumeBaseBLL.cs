@@ -94,7 +94,7 @@ namespace Smart.API.Adapter.Biz
             IThirdApp thirdApp = ThirdAppFactory.Create(Common.CommonSettings.ThirdApp);
             if (thirdApp != null)
             {
-                thirdApp.DeptOpr(requestData, OprType, thirdParentId, out message);
+                thirdApp.DeptOpr(ref requestData, OprType, thirdParentId, out message);
             }
 
             switch (OprType)
@@ -150,6 +150,8 @@ namespace Smart.API.Adapter.Biz
             }
             else
             {
+                requestData.ThirdPersonId = model.ThirdPersonId;//这些属性不能改变
+                requestData.CreateTime = model.CreateTime;
                 OprType = 2;//更新
             }
             if (requestData.Status == 1)//删除
@@ -200,7 +202,7 @@ namespace Smart.API.Adapter.Biz
             IThirdApp thirdApp = ThirdAppFactory.Create(Common.CommonSettings.ThirdApp);
             if (thirdApp != null)
             {
-                thirdApp.PersonOpr(requestData, depart, OprType, out message);
+                thirdApp.PersonOpr(ref requestData, depart, OprType, out message);
             }
 
             switch (OprType)
@@ -433,6 +435,30 @@ namespace Smart.API.Adapter.Biz
             return result;
         }
 
-         
+
+        /// <summary>
+        /// 查询消费记录
+        /// </summary>
+        /// <param name="requestData"></param>
+        /// <param name="records"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public int SearchConsumeRecords(requestConsumeRecords requestData, ref responseConsumeRecords records, out string message)
+        {
+            int result = 0;
+            message = "";
+            IThirdApp thirdApp = ThirdAppFactory.Create(Common.CommonSettings.ThirdApp);
+            if (thirdApp == null)
+            {
+                result = 1;
+                LogHelper.Error("ThirdApp未配置");
+            }
+            else
+            {
+                result = thirdApp.SearchConsumeRecords(requestData, ref records, out message);
+            }
+            return result;
+        }
+
     }
 }

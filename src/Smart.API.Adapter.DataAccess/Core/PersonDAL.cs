@@ -42,5 +42,11 @@ namespace Smart.API.Adapter.DataAccess.Core
             return GetEnityBySqlString<PersonModel>(sql, null);
         }
 
+
+        public PersonModel GetPersonByThirdPersonId(string thirdPersonId)
+        {
+            string sql = "select * from Person where ThirdPersonId = '" + thirdPersonId + "' and  Status = 0";
+            return GetEnityBySqlString<PersonModel>(sql, null);
+        }
     }
 }

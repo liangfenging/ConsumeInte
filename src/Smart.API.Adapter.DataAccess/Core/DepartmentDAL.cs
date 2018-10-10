@@ -43,6 +43,12 @@ namespace Smart.API.Adapter.DataAccess.Core
         }
 
 
+        public DepartmentModel GetDepartmentByThirdDeptId(string thirdDeptId)
+        {
+            string sql = "select * from Department where ThirdDeptId = '" + thirdDeptId + "' and  Status = 0";
+            return GetEnityBySqlString<DepartmentModel>(sql, null);
+        }
+
         /// <summary>
         /// 部门是否已经被使用
         /// 被使用，不能删除

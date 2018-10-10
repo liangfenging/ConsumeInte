@@ -89,5 +89,34 @@ namespace Smart.API.Adapter.Api.Controllers.V1
             return Request.CreateResponse(apiresult);
         }
 
+
+        [HttpPost, WriteLog, ActionName("consumerecords")]
+        public HttpResponseMessage consumerecords(requestConsumeRecords requestData)
+        {
+            if (requestData.pageIndex <= 0)
+            {
+                requestData.pageIndex = 1;
+            }
+            if (requestData.pageSize <= 0)
+            {
+                requestData.pageSize = 10;
+            }
+            APIResultBase<responseConsumeRecords> apiresult = new APIResultBase<responseConsumeRecords>();
+            string message = "";
+            responseConsumeRecords records = new responseConsumeRecords();
+            int result = new ConsumeBaseBLL().SearchConsumeRecords(requestData, ref records, out message);
+            if (result != 0)
+            {
+                apiresult.code = "1";
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    message = "查询消费记录失败";
+                }
+                apiresult.msg = message;
+            }
+            apiresult.data = records;
+            return Request.CreateResponse(apiresult);
+        }
+
     }
 }

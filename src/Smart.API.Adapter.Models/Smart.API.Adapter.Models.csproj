@@ -70,6 +70,7 @@
     <Compile Include="Core\PagesBase.cs" />
     <Compile Include="Core\InterfaceSyncProxyException.cs" />
     <Compile Include="Core\UserModel.cs" />
+    <Compile Include="DTO\Base\ConsumeRecords.cs" />
     <Compile Include="EastRiver\DeptModel.cs" />
     <Compile Include="EastRiver\EmployeeAccountModel.cs" />
     <Compile Include="EastRiver\EmployeeCardModel.cs" />
@@ -88,7 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Park\" />
-    <Folder Include="DTO\Base\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

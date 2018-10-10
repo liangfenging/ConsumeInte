@@ -11,7 +11,7 @@ namespace Smart.API.Adapter.ThirdApp
 {
     public class EastRiverApp : IThirdApp
     {
-        public int DeptOpr(DepartmentModel requestData, int OprType, string thirdParentId, out string message)
+        public int DeptOpr(ref DepartmentModel requestData, int OprType, string thirdParentId, out string message)
         {
             message = "";
             int result = 0;
@@ -46,7 +46,7 @@ namespace Smart.API.Adapter.ThirdApp
             return result;
         }
 
-        public int PersonOpr(PersonModel requestData, DepartmentModel Dept, int OprType, out string message)
+        public int PersonOpr(ref PersonModel requestData, DepartmentModel Dept, int OprType, out string message)
         {
             message = "";
             int result = 0;
@@ -60,7 +60,7 @@ namespace Smart.API.Adapter.ThirdApp
             switch (OprType)
             {
                 case 1: //新增
-
+                    requestData.ThirdPersonId = model.emp_id;
                     new EastRiverBLL().InsertEmployee(model);
                     break;
                 case 2: //更新
@@ -190,6 +190,39 @@ namespace Smart.API.Adapter.ThirdApp
                     }
                 }
             }
+            return result;
+        }
+
+        public int SearchConsumeRecords(requestConsumeRecords requestData, ref responseConsumeRecords records, out string message)
+        {
+            message = "";
+            int result = 0;
+            int totalCount = 0;
+            int pageCount = 0;
+            ICollection<reponseMealRecord> IMealRecords = new EastRiverBLL().GetMealRecords(requestData, out totalCount, out pageCount);
+            List<ConsumeRecords> LConsumeRecords = new List<ConsumeRecords>();
+            if (IMealRecords != null && IMealRecords.Count > 0)
+            {
+                foreach (reponseMealRecord item in IMealRecords)
+                {
+                    ConsumeRecords record = new ConsumeRecords();
+                    record.cardNo = item.card_id;
+                    record.consumeAmount = item.card_consume.ToString();
+                    record.consumeTime = item.sign_time.ToString("yyyy-MM-dd HH:mm:ss");
+                    record.recordId = item.nRecSeq.ToString();
+                    //record.personId = item.emp_id;//该第三方集成的人员ID为相同，其他的此处可能需要查询数据库获取
+                    record.personName = item.emp_fname;
+                    record.deptName = item.depart_name;
+
+                    LConsumeRecords.Add(record);
+                }
+            }
+            records.consumeRecords = LConsumeRecords;
+            records.pageCount = pageCount;
+            records.totalCount = totalCount;
+            records.pageIndex = requestData.pageIndex;
+            records.pageSize = requestData.pageSize;
+
             return result;
         }
     }

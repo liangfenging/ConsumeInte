@@ -1,4 +1,5 @@
 ﻿using Smart.API.Adapter.DataAccess.EastRiver;
+using Smart.API.Adapter.Models;
 using Smart.API.Adapter.Models.EastRiver;
 using System;
 using System.Collections.Generic;
@@ -122,7 +123,7 @@ namespace Smart.API.Adapter.BizCore
         /// <returns></returns>
         public bool UpdateEmployeeAccount(EmployeeAccountModel model)
         {
-            return EmployeeAccountDAL.ProxyInstance.Update<EmployeeAccountModel>(model,model.card_id);
+            return EmployeeAccountDAL.ProxyInstance.Update<EmployeeAccountModel>(model, model.card_id);
         }
 
         /// <summary>
@@ -135,7 +136,10 @@ namespace Smart.API.Adapter.BizCore
             return EmployeeAccountDAL.ProxyInstance.FindByKey<EmployeeAccountModel>(cardNo);
         }
 
-
+        public ICollection<reponseMealRecord> GetMealRecords(requestConsumeRecords requestData, out int totalCount, out int pageCount)
+        {
+            return MealRecordsDAL.ProxyInstance.GetMealRecords(requestData, out totalCount, out pageCount);
+        }
 
     }
 }

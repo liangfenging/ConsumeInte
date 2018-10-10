@@ -183,4 +183,64 @@ namespace Smart.API.Adapter.Models.EastRiver
         }
 
     }
+
+
+    public class reponseMealRecord
+    {
+        //t.emp_id,t.emp_fname,t.depart_id,t.depart_name, t.card_id,t.card_consume,t.sign_tim
+
+        public int nRecSeq
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 工号
+        /// </summary>
+        public string emp_id
+        {
+            get;
+            set;
+        }
+
+        public string emp_fname
+        {
+            get;
+            set;
+        }
+
+        public string depart_id
+        {
+            get;
+            set;
+        }
+
+        public string depart_name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 卡号，必填
+        /// </summary>
+        public string card_id
+        {
+            get;
+            set;
+        }
+
+        public string card_consume
+        {
+            get;
+            set;
+        }
+
+        public DateTime sign_time
+        {
+            get;
+            set;
+        }
+    }
 }
