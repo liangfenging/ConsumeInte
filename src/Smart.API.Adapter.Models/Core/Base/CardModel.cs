@@ -23,6 +23,27 @@ namespace Smart.API.Adapter.Models
             set;
         }
 
+        public string PersonName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 部门标识
+        /// </summary>
+        public string DeptId
+        {
+            get;
+            set;
+        }
+
+        public string DeptName
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 卡成本
         /// </summary>

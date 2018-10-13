@@ -58,7 +58,7 @@ namespace Smart.API.Adapter.DataAccess.EastRiver
             int pageBegin = (requestData.pageIndex - 1) * requestData.pageSize;
             int pageEnd = requestData.pageIndex * requestData.pageSize;
             //获取消费明细
-            string sql = @"select t.nRecSeq, t.emp_id,t.emp_fname,t.depart_id,t.depart_name, t.card_id,t.card_consume,t.sign_time  from (select ROW_NUMBER() over( order by a.sign_time ) as row_id,a.nRecSeq, a.emp_id,b.emp_fname,c.depart_id,c.depart_name, a.card_id,a.card_consume,a.sign_time 
+            string sql = @"select t.nRecSeq,t.clock_id, t.emp_id,t.emp_fname,t.depart_id,t.depart_name, t.card_id,t.card_consume,t.sign_time  from (select ROW_NUMBER() over( order by a.sign_time ) as row_id,a.nRecSeq,a.clock_id, a.emp_id,b.emp_fname,c.depart_id,c.depart_name, a.card_id,a.card_consume,a.sign_time 
                             FROM [MealRecords] a with(nolock) inner join  (select * from [Employee] with(nolock) where emp_fname like '%{0}%' {1} ) b on a.emp_id =b.emp_id
                             inner join  (select * from [Departs] with(nolock) where depart_name like '%{2}%' {3} ) c on b.depart_id = c.depart_id where a.sign_time >='{4}' and a.sign_time<='{5}' {6}) t where row_id> " + pageBegin + " and row_id<=" + pageEnd;
 

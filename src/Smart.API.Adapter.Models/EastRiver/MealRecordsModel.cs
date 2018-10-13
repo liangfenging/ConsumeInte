@@ -231,6 +231,15 @@ namespace Smart.API.Adapter.Models.EastRiver
             set;
         }
 
+        /// <summary>
+        /// 设备ID
+        /// </summary>
+        public string clock_id
+        {
+            get;
+            set;
+        }
+
         public string card_consume
         {
             get;

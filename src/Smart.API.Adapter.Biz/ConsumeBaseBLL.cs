@@ -147,6 +147,7 @@ namespace Smart.API.Adapter.Biz
             if (model == null)
             {
                 OprType = 1;//新增
+
             }
             else
             {
@@ -242,20 +243,56 @@ namespace Smart.API.Adapter.Biz
 
             if (string.IsNullOrWhiteSpace(requestData.PersonId))
             {
-                result = 1;
-                message = "参数PersonId不能为空";
-                return result;
+                //result = 1;
+                //message = "参数PersonId不能为空";
+                requestData.PersonId = requestData.CardNo.Trim();
+                LogHelper.Info("卡操作：传递的参数PersonID为空。使用CardNo进行人事登记");
+                //return result;
             }
+            string deptId = "00000000-0000-0000-0000-000000000000";
+            if (!string.IsNullOrWhiteSpace(requestData.DeptId))
+            {
+                deptId = requestData.DeptId.Trim();
+            }
+
+
+            DepartmentModel depart = null;
             PersonBLL bll = new PersonBLL();
             PersonModel person = bll.GetPersonByPersonId(requestData.PersonId);
             if (person == null)
             {
-                result = 1;
-                message = "PersonId[" + requestData.PersonId + "]不存在或已删除";
-                return result;
-            }
-            DepartmentModel depart = new DepartmentBLL().GetDepartmentByDeptId(person.DeptId);
+                //创建部门和人事资料
 
+                PersonModel requestPerson = new PersonModel();
+                requestPerson.PersonName = string.IsNullOrWhiteSpace(requestData.PersonName) ? requestData.PersonId : requestData.PersonName;
+
+                requestPerson.DeptId = deptId;
+                DepartmentModel requestDetp = new DepartmentModel();
+                requestDetp.DeptId = deptId;
+                depart = new DepartmentBLL().GetDepartmentByDeptId(requestDetp.DeptId);
+                if (depart == null)
+                {
+                    requestDetp.DeptName = string.IsNullOrWhiteSpace(requestData.DeptName) ? "默认部门" : requestData.DeptName;
+                    requestDetp.DeptNo = deptId;
+                    result = DeptOpr(requestDetp, out message);
+                    if (result != 0)
+                    {
+                        return result;
+                    }
+                }
+                result = PersonOpr(requestPerson, out message);
+                if (result != 0)
+                {
+                    return result;
+                }
+                //result = 1;
+                //message = "PersonId[" + requestData.PersonId + "]不存在或已删除";
+                //return result;
+            }
+            if (depart == null)
+            {
+                depart = new DepartmentBLL().GetDepartmentByDeptId(person.DeptId);
+            }
             int OprType = 0;//1:新增发行， 2：退卡, 3:挂失，4，更新
             if (requestData.Status == 1)
             {

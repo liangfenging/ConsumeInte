@@ -29,7 +29,14 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
-
+        /// <summary>
+        /// 设备ID
+        /// </summary>
+        public string deviceId
+        {
+            get;
+            set;
+        }
         //public string deptId
         //{
         //    get;
@@ -132,6 +139,8 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
+
+      
     }
 
     public class responseConsumeRecords : PagesBase

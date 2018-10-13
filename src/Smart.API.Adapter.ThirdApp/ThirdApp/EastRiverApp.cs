@@ -213,7 +213,7 @@ namespace Smart.API.Adapter.ThirdApp
                     //record.personId = item.emp_id;//该第三方集成的人员ID为相同，其他的此处可能需要查询数据库获取
                     record.personName = item.emp_fname;
                     record.deptName = item.depart_name;
-
+                    record.deviceId = item.clock_id;
                     LConsumeRecords.Add(record);
                 }
             }
