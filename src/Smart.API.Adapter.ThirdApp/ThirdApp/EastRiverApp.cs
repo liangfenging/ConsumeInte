@@ -225,6 +225,9 @@ namespace Smart.API.Adapter.ThirdApp
                     record.personName = item.emp_fname;
                     record.deptName = item.depart_name;
                     record.deviceId = item.clock_id;
+                    record.deviceName = item.clock_name;
+                    record.dinRoomId = item.dinRoom_id;
+                    record.dinRoomName = item.dinRoom_name;
                     LConsumeRecords.Add(record);
                 }
             }
