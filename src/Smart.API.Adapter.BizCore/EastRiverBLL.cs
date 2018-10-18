@@ -15,6 +15,11 @@ namespace Smart.API.Adapter.BizCore
         {
             return DeptDAL.ProxyInstance.GetNewDeptId(parentId);
         }
+
+        public DeptModel GetDept(string dept_id)
+        {
+            return DeptDAL.ProxyInstance.FindByKey<DeptModel>(dept_id);
+        }
         /// <summary>
         /// 新增组织
         /// </summary>
@@ -102,7 +107,7 @@ namespace Smart.API.Adapter.BizCore
         /// </summary>
         /// <param name="cardNo"></param>
         /// <returns></returns>
-        public EmployeeCardModel GetEmployeeCardByCarNo(string cardNo)
+        public EmployeeCardModel GetEmployeeCardByCardNo(string cardNo)
         {
             return EmployeeCardDAL.ProxyInstance.FindByKey<EmployeeCardModel>(cardNo);
         }
@@ -131,7 +136,7 @@ namespace Smart.API.Adapter.BizCore
         /// </summary>
         /// <param name="cardNo"></param>
         /// <returns></returns>
-        public EmployeeAccountModel GetEmployeeAccountByCarNo(string cardNo)
+        public EmployeeAccountModel GetEmployeeAccountByCardNo(string cardNo)
         {
             return EmployeeAccountDAL.ProxyInstance.FindByKey<EmployeeAccountModel>(cardNo);
         }

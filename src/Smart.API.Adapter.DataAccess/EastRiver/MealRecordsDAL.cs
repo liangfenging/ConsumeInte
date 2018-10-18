@@ -58,9 +58,9 @@ namespace Smart.API.Adapter.DataAccess.EastRiver
             int pageBegin = (requestData.pageIndex - 1) * requestData.pageSize;
             int pageEnd = requestData.pageIndex * requestData.pageSize;
             //获取消费明细
-            string sql = @"select t.nRecSeq,t.clock_id, t.emp_id,t.emp_fname,t.depart_id,t.depart_name, t.card_id,t.card_consume,t.sign_time  from (select ROW_NUMBER() over( order by a.sign_time ) as row_id,a.nRecSeq,a.clock_id, a.emp_id,b.emp_fname,c.depart_id,c.depart_name, a.card_id,a.card_consume,a.sign_time 
-                            FROM [MealRecords] a with(nolock) inner join  (select * from [Employee] with(nolock) where emp_fname like '%{0}%' {1} ) b on a.emp_id =b.emp_id
-                            inner join  (select * from [Departs] with(nolock) where depart_name like '%{2}%' {3} ) c on b.depart_id = c.depart_id where a.sign_time >='{4}' and a.sign_time<='{5}' {6}) t where row_id> " + pageBegin + " and row_id<=" + pageEnd;
+            string sql = @"select t.nRecSeq,t.clock_id, t.emp_id,t.emp_fname,t.depart_id,t.depart_name, t.card_id,t.card_consume,t.sign_time,t.clock_name,t.dinRoom_id,t.dinRoom_name  from (select ROW_NUMBER() over( order by a.sign_time ) as row_id,a.nRecSeq,a.clock_id, a.emp_id,b.emp_fname,c.depart_id,c.depart_name, a.card_id,a.card_consume,a.sign_time,d.clock_name,e.dinRoom_id,e.dinRoom_name 
+                            FROM [MealRecords] a with(nolock) inner join  (select * from [Employee] with(nolock) where emp_fname like '%{0}%' {1} ) b on a.emp_id =b.emp_id 
+                            inner join  (select * from [Departs] with(nolock) where depart_name like '%{2}%' {3} ) c on b.depart_id = c.depart_id  left join [Clocks] d on d.clock_id = a.clock_id left join [DinRoom] e on d.DinRoom_id = e.DinRoom_id  where a.sign_time >='{4}' and a.sign_time<='{5}' {6}  {7}) t where row_id> " + pageBegin + " and row_id<=" + pageEnd;
 
             string sql0 = string.IsNullOrWhiteSpace(requestData.personName) ? "" : requestData.personName.Trim();
             string sql1 = string.IsNullOrWhiteSpace(requestData.ThirdPersonId) ? "" : " and emp_id='" + requestData.ThirdPersonId.Trim() + "' ";
@@ -69,12 +69,13 @@ namespace Smart.API.Adapter.DataAccess.EastRiver
             string sql4 = string.IsNullOrWhiteSpace(requestData.startTime) ? DateTime.Now.ToShortDateString() : requestData.startTime;
             string sql5 = string.IsNullOrWhiteSpace(requestData.endTime) ? DateTime.Now.ToShortDateString() : requestData.endTime;
             string sql6 = string.IsNullOrWhiteSpace(requestData.cardNo) ? "" : " and a.card_id='" + requestData.cardNo.Trim() + "' ";
-            sql = string.Format(sql, sql0, sql1, sql2, sql3, sql4, sql5, sql6);
+            string sql7 = string.IsNullOrWhiteSpace(requestData.dinRoomName) ? "" : " and e.DinRoom_name like '%" + requestData.dinRoomName.Trim() + "'% ";
+            sql = string.Format(sql, sql0, sql1, sql2, sql3, sql4, sql5, sql6, sql7);
 
             //获取总记录数
             string totalsql = @"select count(0) from [MealRecords]  a with(nolock) inner join  (select * from [Employee] with(nolock) where emp_fname like '%{0}%' {1} ) b on a.emp_id =b.emp_id
-                            inner join  (select * from [Departs] with(nolock) where depart_name like '%{2}%' {3} ) c on b.depart_id = c.depart_id where a.sign_time >='{4}' and a.sign_time<='{5}'";
-            totalsql = string.Format(totalsql, sql0, sql1, sql2, sql3, sql4, sql5, sql6);
+                            inner join  (select * from [Departs] with(nolock) where depart_name like '%{2}%' {3} ) c on b.depart_id = c.depart_id  left join [Clocks] d on d.clock_id = a.clock_id left join [DinRoom] e on d.DinRoom_id = e.DinRoom_id  where a.sign_time >='{4}' and a.sign_time<='{5}' {6}  {7} ";
+            totalsql = string.Format(totalsql, sql0, sql1, sql2, sql3, sql4, sql5, sql6, sql7);
 
             DataTable dt = GetDataTableBySqlString(totalsql, null);
             if (dt != null && dt.Rows.Count > 0)

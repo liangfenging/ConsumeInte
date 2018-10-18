@@ -240,6 +240,33 @@ namespace Smart.API.Adapter.Models.EastRiver
             set;
         }
 
+        /// <summary>
+        /// 消费机名称
+        /// </summary>
+        public string clock_name
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 餐厅Id
+        /// </summary>
+        public string dinRoom_id
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 餐厅名称
+        /// </summary>
+        public string dinRoom_name
+        {
+            get;
+            set;
+        }
+
         public string card_consume
         {
             get;

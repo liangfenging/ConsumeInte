@@ -30,18 +30,40 @@ namespace Smart.API.Adapter.Models
             set;
         }
         /// <summary>
-        /// 设备ID
+        /// 消费机设备ID
         /// </summary>
         public string deviceId
         {
             get;
             set;
         }
-        //public string deptId
-        //{
-        //    get;
-        //    set;
-        //}
+
+        /// <summary>
+        /// 消费机名称
+        /// </summary>
+        public string deviceName
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// 餐厅ID
+        /// </summary>
+        public string dinRoomId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 餐厅名称
+        /// </summary>
+        public string dinRoomName
+        {
+            get;
+            set;
+        }
 
         public string deptName
         {
@@ -107,6 +129,15 @@ namespace Smart.API.Adapter.Models
         }
 
         public string deptName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 餐厅名称
+        /// </summary>
+        public string dinRoomName
         {
             get;
             set;

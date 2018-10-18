@@ -94,6 +94,19 @@ namespace Smart.API.Adapter.Models
     }
 
 
+    public class requestCardInfo
+    {
+        /// <summary>
+        /// 卡号
+        /// </summary>
+        public string CardNo
+        {
+            get;
+            set;
+        }
+    }
+
+
     public class CardModel
     {
         public int ID

@@ -118,5 +118,25 @@ namespace Smart.API.Adapter.Api.Controllers.V1
             return Request.CreateResponse(apiresult);
         }
 
+        [HttpPost, WriteLog, ActionName("cardinfo")]
+        public HttpResponseMessage cardinfo(requestCardInfo requestdata)
+        {
+            APIResultBase<CardModel> apiresult = new APIResultBase<CardModel>();
+            string message = "";
+            CardModel model = null;
+            int result = new ConsumeBaseBLL().SearchCardInfo(requestdata, ref model, out message);
+            if (result != 0)
+            {
+                apiresult.code = "1";
+                if (string.IsNullOrWhiteSpace(message))
+                {
+                    message = "卡信息查询失败";
+                }
+                apiresult.msg = message;
+            }
+            apiresult.data = model;
+            return Request.CreateResponse(apiresult);
+        }
+
     }
 }

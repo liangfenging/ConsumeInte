@@ -265,7 +265,7 @@ namespace Smart.API.Adapter.Biz
 
                 PersonModel requestPerson = new PersonModel();
                 requestPerson.PersonName = string.IsNullOrWhiteSpace(requestData.PersonName) ? requestData.PersonId : requestData.PersonName;
-
+                requestPerson.PersonId = requestData.PersonId;
                 requestPerson.DeptId = deptId;
                 DepartmentModel requestDetp = new DepartmentModel();
                 requestDetp.DeptId = deptId;
@@ -303,9 +303,16 @@ namespace Smart.API.Adapter.Biz
                 OprType = 3;//挂失
             }
 
-
             CardModel cardModel = new CardBLL().GetCardByCardNo(requestData.CardNo);
-            if (OprType != 1)
+            if (OprType == 2)
+            {
+                if (cardModel == null)
+                {
+                    result = 0;
+                    return result;
+                }
+            }
+            if (OprType == 3)
             {
                 if (cardModel == null)
                 {
@@ -316,7 +323,7 @@ namespace Smart.API.Adapter.Biz
             }
             if (cardModel == null)
             {
-                OprType = 1;
+                OprType = OprType == 0 ? 1 : OprType;
                 cardModel = new CardModel();//发行
                 cardModel.BackMoney = "";
                 cardModel.Balance = "0";
@@ -329,14 +336,30 @@ namespace Smart.API.Adapter.Biz
             }
             else
             {
-                OprType = 4;//更新
-                cardModel.BeginTime = requestData.BeginTime;
-                cardModel.EndTime = requestData.EndTime;
+                OprType = OprType == 0 ? 4 : OprType;//更新
+                if (((DateTime)requestData.BeginTime).Year > 2000)
+                {
+                    cardModel.BeginTime = requestData.BeginTime;
+                }
+
+                if (((DateTime)requestData.EndTime).Year > 2000)
+                {
+                    cardModel.EndTime = requestData.EndTime;
+                }
+
                 cardModel.PersonId = requestData.PersonId;
                 cardModel.Status = requestData.Status;
                 cardModel.CardCost = requestData.CardCost;
             }
-
+            if (OprType != 1)
+            {
+                if (cardModel == null)
+                {
+                    result = 1;
+                    message = "CardNo[" + requestData.CardNo + "]不存在或已删除";
+                    return result;
+                }
+            }
             IThirdApp thirdApp = ThirdAppFactory.Create(Common.CommonSettings.ThirdApp);
             if (thirdApp != null)
             {
@@ -349,22 +372,22 @@ namespace Smart.API.Adapter.Biz
                     new CardBLL().Insert(cardModel);
                     break;
                 case 2: //退卡
-                    float balance = 0;
-                    float backmoney = 0;
-                    float.TryParse(cardModel.Balance, out balance);
-                    float.TryParse(cardModel.BackMoney, out backmoney);
-                    cardModel.Balance = (balance - backmoney).ToString();
+                    //float balance = 0;
+                    //float backmoney = 0;
+                    //float.TryParse(cardModel.Balance, out balance);
+                    //float.TryParse(cardModel.BackMoney, out backmoney);
+                    cardModel.Balance = "0";
                     new CardBLL().Delete(cardModel);
 
                     CardChargeModel chargeModel = new CardChargeModel();
                     chargeModel.CardNo = cardModel.CardNo;
-                    chargeModel.AfterMoney = (balance - backmoney).ToString();
-                    chargeModel.OprMoney = cardModel.BackMoney;
+                    chargeModel.AfterMoney = "0";
+                    chargeModel.OprMoney = cardModel.Balance;
                     chargeModel.OprType = 2;
                     chargeModel.PreMoney = cardModel.Balance;
-                    chargeModel.Remark = "退卡退回金额" + cardModel.BackMoney;
+                    chargeModel.Remark = "退卡注销金额清为0，注销金额" + cardModel.Balance;
 
-                    new CardChargeBLL().Insert(chargeModel);
+                    new CardChargeBLL().Insert(chargeModel);;
                     break;
                 case 3: //挂失
                     requestData.Status = 2;
@@ -497,5 +520,42 @@ namespace Smart.API.Adapter.Biz
             return result;
         }
 
+        /// <summary>
+        /// 查询卡信息
+        /// </summary>
+        /// <param name="requestData"></param>
+        /// <param name="cardInfo"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public int SearchCardInfo(requestCardInfo requestData, ref CardModel cardInfo, out string message)
+        {
+            message = "";
+            int result = 0;
+            if (string.IsNullOrWhiteSpace(requestData.CardNo))
+            {
+                result = 1;
+                message = "参数CardNo不能为空";
+                return result;
+            }
+
+            cardInfo = new CardBLL().GetCardByCardNo(requestData.CardNo);
+            if (cardInfo == null)
+            {
+                result = 1;
+                message = "CardNo[" + requestData.CardNo + "]不存在";
+                return result;
+            }
+
+            IThirdApp thirdApp = ThirdAppFactory.Create(Common.CommonSettings.ThirdApp);
+            if (thirdApp == null)
+            {
+                LogHelper.Error("ThirdApp未配置");
+                result = 1;
+                message = "ThirdApp未配置";
+                return result;
+            }
+            result = thirdApp.CardInfo(requestData, ref cardInfo, out message);
+            return result;
+        }
     }
 }

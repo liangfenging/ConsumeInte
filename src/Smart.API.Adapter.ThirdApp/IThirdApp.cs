@@ -21,5 +21,7 @@ namespace Smart.API.Adapter.ThirdApp
         int CardChargeOpr(CardChargeModel requestData, int OprType, out string message);
 
         int SearchConsumeRecords(requestConsumeRecords requestData, ref responseConsumeRecords records, out string message);
+
+        int CardInfo(requestCardInfo requestData, ref CardModel cardInfo, out string message);
     }
 }

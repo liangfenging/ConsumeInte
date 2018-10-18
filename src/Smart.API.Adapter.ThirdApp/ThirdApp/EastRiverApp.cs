@@ -23,12 +23,19 @@ namespace Smart.API.Adapter.ThirdApp
             switch (OprType)
             {
                 case 1: //新增
+                    EastRiverBLL bll = new EastRiverBLL();
                     if (string.IsNullOrWhiteSpace(thirdParentId))
                     {
                         thirdParentId = "0";
-
+                        if (bll.GetDept(thirdParentId) == null)
+                        {
+                            DeptModel modeldefault = new DeptModel();
+                            modeldefault.depart_id = thirdParentId;
+                            modeldefault.depart_name = "捷顺科技";
+                            bll.InsertDept(modeldefault);
+                        }
                     }
-                    EastRiverBLL bll = new EastRiverBLL();
+                   
                     requestData.ThirdDeptId = model.depart_id = bll.GetNewDeptId(thirdParentId);
                     bll.InsertDept(model);
 
@@ -80,7 +87,7 @@ namespace Smart.API.Adapter.ThirdApp
         {
             message = "";
             int result = 0;
-            EmployeeCardModel model = new EastRiverBLL().GetEmployeeCardByCarNo(requestData.CardNo);
+            EmployeeCardModel model = new EastRiverBLL().GetEmployeeCardByCardNo(requestData.CardNo);
             if (model == null)
             {
                 model = new EmployeeCardModel();
@@ -89,9 +96,9 @@ namespace Smart.API.Adapter.ThirdApp
             model.emp_id = person.ThirdPersonId;
             model.CardBegDate = requestData.BeginTime;
             model.CardEndDate = requestData.EndTime;
-
-
-            EmployeeAccountModel accountModel = new EastRiverBLL().GetEmployeeAccountByCarNo(requestData.CardNo);
+            model.card_sn = requestData.CardNo;
+            model.CardType = 1;
+            EmployeeAccountModel accountModel = new EastRiverBLL().GetEmployeeAccountByCardNo(requestData.CardNo);
             if (accountModel == null)
             {
                 accountModel = new EmployeeAccountModel();
@@ -115,9 +122,9 @@ namespace Smart.API.Adapter.ThirdApp
                     break;
                 case 2: //退卡
                     model.CardState = 5;//注销
-                    float backmoney = 0;
-                    float.TryParse(requestData.BackMoney, out backmoney);
-                    model.card_balance = model.card_balance - backmoney;
+                    //float backmoney = 0;
+                    //float.TryParse(requestData.BackMoney, out backmoney);
+                    model.card_balance = 0;
                     new EastRiverBLL().UpdateEmployeeCard(model);
 
                     //更新消费账户
@@ -129,7 +136,11 @@ namespace Smart.API.Adapter.ThirdApp
                     model.CardState = 2;//挂失
                     new EastRiverBLL().UpdateEmployeeCard(model);
                     break;
-                case 5: //更新
+                case 4: //更新
+                    if (requestData.Status == 0)
+                    {
+                        model.CardState = 1;
+                    }
                     new EastRiverBLL().UpdateEmployeeCard(model);
 
                     new EastRiverBLL().UpdateEmployeeAccount(accountModel);
@@ -155,7 +166,7 @@ namespace Smart.API.Adapter.ThirdApp
             float oprMoney = 0;
             float.TryParse(requestData.OprMoney, out oprMoney);
 
-            EmployeeCardModel model = new EastRiverBLL().GetEmployeeCardByCarNo(requestData.CardNo);
+            EmployeeCardModel model = new EastRiverBLL().GetEmployeeCardByCardNo(requestData.CardNo);
             if (model == null)
             {
                 result = 1;
@@ -163,7 +174,7 @@ namespace Smart.API.Adapter.ThirdApp
             }
             else
             {
-                EmployeeAccountModel accountModel = new EastRiverBLL().GetEmployeeAccountByCarNo(requestData.CardNo);
+                EmployeeAccountModel accountModel = new EastRiverBLL().GetEmployeeAccountByCardNo(requestData.CardNo);
                 if (accountModel == null)
                 {
                     result = 1;
@@ -222,6 +233,30 @@ namespace Smart.API.Adapter.ThirdApp
             records.totalCount = totalCount;
             records.pageIndex = requestData.pageIndex;
             records.pageSize = requestData.pageSize;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 查询卡余额信息
+        /// </summary>
+        /// <param name="requestData"></param>
+        /// <param name="cardInfo"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public int CardInfo(requestCardInfo requestData, ref CardModel cardInfo, out string message)
+        {
+            int result = 0;
+            message = "";
+            EmployeeCardModel model = new EastRiverBLL().GetEmployeeCardByCardNo(requestData.CardNo);
+            if (model == null)
+            {
+                result = 1;
+                message = "消费机系统未查询到卡号[" + requestData.CardNo + "]";
+                cardInfo = null;
+                return result;
+            }
+            cardInfo.Balance = model.card_balance.ToString();
 
             return result;
         }

@@ -34,12 +34,12 @@ namespace Smart.API.Adapter.Models.EastRiver
             set;
         }
 
-        private int card_type = -1;
+        private int card_type = 1;
         /// <summary>
-        /// 默认值-1
+        /// 默认值1 ID卡
         /// 卡格式种类标识
         /// </summary>
-        public int Card_Type
+        public int CardType
         {
             get { return card_type; }
             set { card_type = value; }
