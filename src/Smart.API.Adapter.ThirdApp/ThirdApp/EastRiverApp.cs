@@ -158,7 +158,7 @@ namespace Smart.API.Adapter.ThirdApp
             message = "";
             int result = 0;
             float balance = 0;
-            float.TryParse(requestData.AfterMoney, out balance);
+            float.TryParse(requestData.AfterMoney, out balance);//不能用此余额，需要查询第三方系统里的余额
 
             float preMoney = 0;
             float.TryParse(requestData.PreMoney, out preMoney);
@@ -182,23 +182,29 @@ namespace Smart.API.Adapter.ThirdApp
                 }
                 else
                 {
-                    model.card_balance = balance;
-                    accountModel.card_balance = balance;
-                    new EastRiverBLL().UpdateEmployeeCard(model);
-                    new EastRiverBLL().UpdateEmployeeAccount(accountModel);
+                   
 
                     //TODO: 是否需要更新第三方的充值表 和 退款表
                     switch (OprType)
                     {
                         case 1: //充值
-
+                            balance = model.card_balance + oprMoney;
                             break;
                         case 2: //退款
-
+                            balance = model.card_balance - oprMoney;
                             break;
                         default:
                             break;
                     }
+
+                    preMoney = model.card_balance;
+                    model.card_balance = balance;
+                    accountModel.card_balance = balance;
+
+                    requestData.AfterMoney = balance.ToString();
+                    requestData.PreMoney = preMoney.ToString();
+                    new EastRiverBLL().UpdateEmployeeCard(model);
+                    new EastRiverBLL().UpdateEmployeeAccount(accountModel);
                 }
             }
             return result;

@@ -279,15 +279,14 @@ namespace Smart.API.Adapter.Biz
                     {
                         return result;
                     }
+                    depart = requestDetp;
                 }
                 result = PersonOpr(requestPerson, out message);
                 if (result != 0)
                 {
                     return result;
                 }
-                //result = 1;
-                //message = "PersonId[" + requestData.PersonId + "]不存在或已删除";
-                //return result;
+                person = requestPerson;
             }
             if (depart == null)
             {
